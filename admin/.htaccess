@@ -1,0 +1,5 @@
+# IP制限（東京オフィスと宮崎オフィスのみ）
+order deny,allow
+deny from all
+allow from 219.113.141.50
+allow from 110.4.142.112

@@ -1,11 +1,12 @@
 <?php
+return array(
     //性別の配列
-    $sex = array(
+    define('SEX', array(
         '1' => '男性',
         '2' => '女性'
-    );
+    )),
     //年齢の配列
-    $age = array(
+    define('AGE', array(
         '' => '未選択',
         '1' => '10代',
         '2' => '20代',
@@ -14,16 +15,16 @@
         '5' => '50代',
         '6' => '60代',
         '7' => '65歳以上'
-    );
+    )),
     //血液型の配列
-    $blood_type = array(
+    define('BLOOD_TYPE', array(
         '1' => 'A型',
         '2' => 'B型',
         '3' => 'O型',
         '4' => 'AB型'
-    );
+    )),
     //職業の配列
-    $job = array(
+    define('JOB', array(
         '' => '未選択',
         '1' => '会社員',
         '2' => '公務員',
@@ -32,9 +33,9 @@
         '5' => '主婦',
         '6' => '学生',
         '7' => 'その他'
-    );
+    )),
     //都道府県の配列
-    $prefecture = array(
+    define('PREFECTURE', array(
         ''  => '未選択',
         '1'  => '北海道',
         '2'  => '青森県',
@@ -83,9 +84,9 @@
         '45' => '宮崎県',
         '46' => '鹿児島県',
         '47' => '沖縄県'
-    );
+    )),
     //興味あるカテゴリーの配列
-    $category = array(
+    define('CATEGORY', array(
         '1' => '音楽',
         '2' => '読書',
         '3' => '映画',
@@ -94,9 +95,9 @@
         '6' => 'インテリア',
         '7' => '旅行',
         '8' => 'その他'
-    );
+    )),
     //入力項目のキーの配列
-    $default_key = array(
+    define('DEFAULT_KEY', array(
         '0'  => 'full_name',
         '1'  => 'kana',
         '2'  => 'sex',
@@ -115,4 +116,5 @@
         '15' => 'mail_confirm',
         '16' => 'interest_category',
         '17' => 'contact_content'
-    );
+    ))
+);

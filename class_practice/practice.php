@@ -1,261 +1,178 @@
 <?php
 require_once('../form/const.php');
-require_once('../form/functions.php');
+require_once('validation.php');
 
 class FullName
 {
-    protected $full_name;
+    private $full_name;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->full_name) || $this->full_name == '') {
-            $validation_flg = true;
-        } elseif (countStrings($this->full_name, 255)) {
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->full_name) || $validation->checkStringsMaxNum($this->full_name, 255)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Kana
 {
-    protected $kana;
+    private $kana;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->kana) || $this->kana == '') {
-            $validation_flg = true;
-        } else {
-            //フォーマットと桁数のバリデーション
-            $return_format = checkFormat($this->kana, '/^[ァ-ヶーa-zA-Zａ-ｚＡ-Ｚ]+$/u');
-            $return_length = countStrings($this->kana, 255);
-
-            if ($return_format || $return_length) {
-                $validation_flg = true;
-            }
+        $validation = new Validation();
+        if (
+            $validation->isEmpty($this->kana) ||
+            $validation->checkHalfAndFullSizeStrings($this->kana) ||
+            $validation->checkStringsMaxNum($this->kana, 255)
+        ) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Sex
 {
-    protected $sex;
+    private $sex;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->sex) || $this->sex == '') {
-            $validation_flg = true;
-        } else {
-            //フォーマットと桁数のバリデーション
-            $return_format = checkFormat($this->sex, '/^[ァ-ヶーa-zA-Zａ-ｚＡ-Ｚ]+$/u');
-            $return_length = countStrings($this->sex, 255);
-
-            if ($return_format || $return_length) {
-                $validation_flg = true;
-            }
+        $validation = new Validation();
+        if ($validation->isEmpty($this->sex) || $validation->checkDataFromOutside($this->sex, SEX)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Age
 {
-    protected $age;
+    private $age;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($age) || $age == '') {
-            $validation_flg = true;
-        } elseif (checkDataFromOutside($this->age, AGE)) {
-            //画面外からのバリデーション
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->age) || $validation->checkDataFromOutside($this->age, AGE)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class BloodType
 {
-    protected $blood_type;
+    private $blood_type;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($blood_type) || $blood_type == '') {
-            $validation_flg = true;
-        } elseif (checkDataFromOutside($this->blood_type, BLOOD_TYPE)) {
-            //画面外からのバリデーション
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->blood_type) || $validation->checkDataFromOutside($this->blood_type, BLOOD_TYPE)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Job
 {
-    protected $job;
+    private $job;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($job) || $job == '') {
-            $validation_flg = true;
-        } elseif (checkDataFromOutside($this->job, JOB)) {
-            //画面外からのバリデーション
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->job) || $validation->checkDataFromOutside($this->job, JOB)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class ZipCode
 {
-    protected $zip_code1;
-    protected $zip_code2;
+    private $zip_code1;
+    private $zip_code2;
 
     public function validation()
     {
-        $validation_flg = false;
+        $validation = new Validation();
 
         //半角に変換
         $this->zip_code1 = mb_convert_kana($this->zip_code1, "n", 'UTF-8');
         $this->zip_code2 = mb_convert_kana($this->zip_code2, "n", 'UTF-8');
 
-        //必須のバリデーション
         if (
-            !isset($this->zip_code1) || $this->zip_code1 == '' ||
-            !isset($this->zip_code2) || $this->zip_code2 == ''
+            $validation->isEmpty($this->zip_code1) ||
+            $validation->isEmpty($this->zip_code2) ||
+            $validation->checkFormat($this->zip_code1, '/^[0-9]{3}$/') ||
+            $validation->checkFormat($this->zip_code2, '/^[0-9]{4}$/')
         ) {
-            $validation_flg = true;
-        } else {
-            $return_format_post_1 = checkFormat($this->zip_code1, '/^[0-9]{3}$/');
-            $return_format_post_2 = checkFormat($this->zip_code2, '/^[0-9]{4}$/');
-
-            //フォーマットのバリデーション
-            if ($return_format_post_1 || $return_format_post_2) {
-                $validation_flg = true;
-            }
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Prefecture
 {
-    protected $prefecture;
+    private $prefecture;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->prefecture) || $this->prefecture == '') {
-            $validation_flg = true;
-        } elseif (checkDataFromOutside($this->prefecture, PREFECTURE)) {
-            //画面外からのバリデーション
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->prefecture) || $validation->checkDataFromOutside($this->prefecture, PREFECTURE)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
-class Municipality
+class City
 {
-    protected $municipality;
+    private $city;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->municipality) || $this->municipality == '') {
-            $validation_flg = true;
-        } elseif (countStrings($this->municipality, 255)) {
-            //桁数のバリデーション
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->city) || $validation->checkStringsMaxNum($this->city, 255)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class AddressOther
 {
-    protected $address_other;
+    private $address_other;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //桁数のバリデーション
-        if (countStrings($this->address_other, 255)) {
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->checkStringsMaxNum($this->address_other, 255)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class PhoneNumber
 {
-    protected $phone_number_1;
-    protected $phone_number_2;
-    protected $phone_number_3;
+    private $phone_number_1;
+    private $phone_number_2;
+    private $phone_number_3;
     public $phone_number;
 
     public function validation()
     {
-        $validation_flg = false;
+        $validation = new Validation();
 
         //半角に変換
         $this->phone_number_1 =  mb_convert_kana($this->phone_number_1, "n", 'UTF-8');
         $this->phone_number_2 =  mb_convert_kana($this->phone_number_2, "n", 'UTF-8');
         $this->phone_number_3 =  mb_convert_kana($this->phone_number_3, "n", 'UTF-8');
 
-        //必須のバリデーション
         if (
-            !isset($this->phone_number_1) || $this->phone_number_1 == '' ||
-            !isset($this->phone_number_2) || $this->phone_number_2 == '' ||
-            !isset($this->phone_number_3) || $this->phone_number_3 == ''
+            $validation->isEmpty($this->phone_number_1) ||
+            $validation->isEmpty($this->phone_number_2) ||
+            $validation->isEmpty($this->phone_number_3) ||
+            checkFormat($this->phone_number_1, '/^[0-9]{2,5}$/') ||
+            checkFormat($this->phone_number_2, '/^[0-9]{2,4}$/') ||
+            checkFormat($this->phone_number_3, '/^[0-9]{3,4}$/')
         ) {
-            $validation_flg = true;
-        } else {
-            $return_format_phone_1 = checkFormat($this->phone_number_1, '/^[0-9]{2,5}$/');
-            $return_format_phone_2 = checkFormat($this->phone_number_2, '/^[0-9]{2,4}$/');
-            $return_format_phone_3 = checkFormat($this->phone_number_3, '/^[0-9]{3,4}$/');
-
-            //フォーマットのバリデーション
-            if ($return_format_phone_1 || $return_format_phone_2 || $return_format_phone_3) {
-                $validation_flg = true;
-            }
+            return false;
         }
-
-        return $validation_flg;
     }
 
     public function linkingPhoneNumber()
@@ -271,55 +188,39 @@ class MailEnter
 
     public function validation()
     {
-        $validation_flg = false;
+        $validation = new Validation();
 
-        //必須のバリデーション
-        if (!isset($this->mail) || $this->mail == '') {
-            $validation_flg = true;
-        } else {
-            //文字数のカウント
-            $return_mail_length = countStrings($this->mail, 255);
-            $return_format_mail = checkFormat($this->mail, '/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/iD');
-
-            //フォーマットのバリデーション
-            if ($return_format_mail || $return_mail_length) {
-                $validation_flg = true;
-            }
+        if (
+            $validation->isEmpty($this->mail) ||
+            $validation->checkHalfAndFullSizeStrings($this->mail) ||
+            $validation->checkStringsMaxNum($this->mail, 255)
+        ) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class MailReenter
 {
-    protected $remail;
+    private $remail;
 
     public function validation($mail)
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->remail) || $this->remail == '') {
-            $validation_flg = true;
-        } else {
-            //文字数のカウント
-            $return_confirm_length = countStrings($this->remail, 255);
-
-            //フォーマットのバリデーション
-            if (($mail != $this->remail) || $return_confirm_length) {
-                $validation_flg = true;
-            }
+        $validation = new Validation();
+        if (
+            $validation->isEmpty($this->remail) ||
+            $validation->checkStringsMaxNum($this->remail, 255) ||
+            $mail != $this->remail
+        ) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 class Mail
 {
-    protected $mail_enter;
-    protected $mail_reenter;
+    private $mail_enter;
+    private $mail_reenter;
 
     function __construct()
     {
@@ -336,24 +237,20 @@ class Mail
 
 class InterestCategory
 {
-    protected $interest_category;
+    private $interest_category;
 
     public function validation()
     {
-        $validation_flg = false;
-
         //何か選択されていれば、バリデーションチェックをする。
         if (!empty($this->interest_category)) {
             //画面外からのバリデーション
             foreach ($this->interest_category as $value) {
                 if (checkDataFromOutside($value, CATEGORY)) {
-                    $validation_flg = true;
+                    return false;
                     break;
                 }
             }
         }
-
-        return $validation_flg;
     }
 
     public function maintainingValue()
@@ -374,26 +271,22 @@ class InterestCategory
 
 class ContactContent
 {
-    protected $contact_content;
+    private $contact_content;
 
     public function validation()
     {
-        $validation_flg = false;
-
-        //必須のバリデーション
-        if (!isset($this->contact_content) || $this->contact_content == '') {
-            $validation_flg = true;
+        $validation = new Validation();
+        if ($validation->isEmpty($this->contact_content)) {
+            return false;
         }
-
-        return $validation_flg;
     }
 }
 
 
 class Name
 {
-    protected $fullname;
-    protected $kana;
+    private $fullname;
+    private $kana;
 
     function __construct()
     {
@@ -412,15 +305,22 @@ class Address
 {
     protected $zip_code;
     protected $prefecture;
-    protected $municipality;
+    protected $city;
     protected $address_other;
 
-    function __construct()
+    private function __construct()
     {
         $this->zip_code = new ZipCode();
         $this->prefecture = new Prefecture();
-        $this->municipality = new Municipality();
+        $this->city = new City();
         $this->address_other = new AddressOther();
+    }
+    public function executeValidation()
+    {
+        $this->zip_code->validation();
+        $this->prefecture->validation();
+        $this->city->validation();
+        $this->address_other->validation();
     }
 }
 
@@ -437,7 +337,7 @@ class Customer
     protected $interest_category;
     protected $contact_content;
 
-    function __construct()
+    private function __construct()
     {
         $this->name = new Name();
         $this->sex = new Sex();

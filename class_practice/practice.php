@@ -337,7 +337,7 @@ class Customer
     protected $interest_category;
     protected $contact_content;
 
-    private function __construct()
+    public function __construct()
     {
         $this->name = new Name();
         $this->sex = new Sex();

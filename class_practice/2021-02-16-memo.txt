@@ -1,0 +1,115 @@
+レイヤードアーキテクチャ　①MVC ②ActiveRecordパターンMVC→DTO（DataTransferObject）を使えば何とか
+
+src
+|_ view __ confirm_template.php(①V) / confirm_controller.php(①C) →　Applicationに依存　でかいモデル（DTO）を受け取る→DDD用のモデルに変換→Application層に送る（変換層を作る）
+|_ application __ confirm_application.php　→　infrastructue/Modelに依存　→　DDD用のモデルでロジックを実行
+|_ infrastructue __ mailsend.php / name_datasource.php →　Modelに依存　→　DDD用のモデルを渡して、DDD用のモデルからでかいモデル（ActiveRecord用）に変換し、insertとかする。（変換層を作る）
+|_ model __ name.php →　独立している(①M)　（②M・MのInfrastracture層に依存・Viewのモデル）　
+
+①の利点
+・ModelをDatabaseのテーブルに合わせなくていい
+
+<!-- ■　View -->
+<html> 
+<!-- confirm_template.php -->
+    <tr class="name_area">
+        <th>お名前</th>
+        <td><?php echo h($form_data['full_name']); ?></td>
+    </tr>
+    <section class="submit_btn_area text-center">
+        <button type="button" onclick="location.href='/naito/form/'" class="form-control btn btn-danger">戻る</button>
+        <button type="submit" name="submit_confirm" class="form-control btn btn-primary">送信する</button>
+    </section>
+</html>
+
+<?php
+//  confirm_controller.php
+    session_start();
+    ini_set('mbstring.internal_encoding' , 'UTF-8');
+    ini_set('display_errors', "On");
+    require_once(__DIR__.'/../database.php');
+    require_once(__DIR__.'/../common_functions.php');
+    require_once(__DIR__.'/../const.php');
+    require_once(__DIR__.'/functions.php');
+
+    //変数の初期化
+    $form_data = array();
+    $error_massage = array();
+
+    if ($_SERVER ['REQUEST_METHOD'] == 'POST') {
+        //POSTされたデータを設定
+        $form_data = $_POST;
+
+        isset($form_data['submit_confirm']{}
+
+        //初期化
+        $all_data = $_SESSION['form_data'];
+
+        NameApplication nameApplication = new NameApplication()
+
+        nameApplication.confirm($all_data)
+
+        include('confirm_model.php');
+
+    }
+
+// ■　Application層
+class NameApplication{
+
+    void confirm(form_data){
+
+        // モデルを作る
+        Name name = new Name(form_data["full_name"])
+
+        //メールを送信する。
+        SendMail sendMail = new SendMail()
+        sendMail.send(name)
+
+        // INSERT INTO
+        NameDataSource nameDataSource = new NameDataSource()
+        nameDataSource.insert(name)
+    }
+}
+
+// ■　Infrastracture層
+//　外部アクセス
+class SendMail{
+    void send(Name name){
+        ・・・
+    }
+}
+
+//　外部アクセス
+class NameDataSource{
+    void insert(Name name){
+        Insert INTO
+            naito_contact_info(name)
+        Values
+            :name,
+        EOF;
+
+        try {
+            $pdo  = connect_pdo($datasouce);
+            $stmh = $pdo->prepare($sql);
+            $stmh->bindParam(':name', name.value, PDO::PARAM_STR);
+        }
+    }
+}
+
+// ■　Model層
+class Name{
+    private value
+}
+
+class TestName{
+    void test_name(){
+        assrt(・・・)
+    }
+}
+
+
+// 一般的なユースケース（CRUD）モデルのライフサイクル（作ってから削除されるまで）　識別（キー）・値（キー以外）・ライフサイクル（CRUD)→全部モデルで表現する
+// ・登録する（C）
+// ・検索する（R）→検索結果（class CustomerList）
+// ・編集する（U)（一つCustomerを選ぶ→編集→保存）
+// ・削除する（D）(一つCustomerを選ぶ→削除）

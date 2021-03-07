@@ -1,6 +1,6 @@
 <?php
-require_once('../form/const.php');
-require_once('validation.php');
+require_once('../../app/const.php');
+require_once('../../app/validation.php');
 
 class FullName
 {
@@ -167,9 +167,9 @@ class PhoneNumber
             $validation->isEmpty($this->phone_number_1) ||
             $validation->isEmpty($this->phone_number_2) ||
             $validation->isEmpty($this->phone_number_3) ||
-            checkFormat($this->phone_number_1, '/^[0-9]{2,5}$/') ||
-            checkFormat($this->phone_number_2, '/^[0-9]{2,4}$/') ||
-            checkFormat($this->phone_number_3, '/^[0-9]{3,4}$/')
+            $validation->checkFormat($this->phone_number_1, '/^[0-9]{2,5}$/') ||
+            $validation->checkFormat($this->phone_number_2, '/^[0-9]{2,4}$/') ||
+            $validation->checkFormat($this->phone_number_3, '/^[0-9]{3,4}$/')
         ) {
             return false;
         }
@@ -241,11 +241,12 @@ class InterestCategory
 
     public function validation()
     {
+        $validation = new Validation();
         //何か選択されていれば、バリデーションチェックをする。
         if (!empty($this->interest_category)) {
             //画面外からのバリデーション
             foreach ($this->interest_category as $value) {
-                if (checkDataFromOutside($value, CATEGORY)) {
+                if ($validation->checkDataFromOutside($value, CATEGORY)) {
                     return false;
                     break;
                 }
@@ -326,28 +327,28 @@ class Address
 
 class Customer
 {
-    protected $name;
-    protected $sex;
-    protected $age;
-    protected $blood_type;
-    protected $job;
-    protected $address;
-    protected $phone_number;
-    protected $mail;
-    protected $interest_category;
-    protected $contact_content;
+    public $name;
+    public $sex;
+    public $age;
+    public $blood_type;
+    public $job;
+    public $address;
+    public $phone_number;
+    public $mail;
+    public $interest_category;
+    public $contact_content;
 
-    public function __construct()
+    public function __construct($form_data)
     {
-        $this->name = new Name();
-        $this->sex = new Sex();
-        $this->age = new Age();
-        $this->blood_type = new BloodType();
-        $this->job = new Job();
-        $this->address = new Address();
-        $this->phone_number = new PhoneNumber();
-        $this->mail = new Mail();
-        $this->interest_category = new InterestCategory();
-        $this->contact_content = new ContactContent();
+        $this->name = new Name($form_data['full_name'], $form_data['kana']);
+        $this->sex = new Sex($form_data['sex']);
+        $this->age = new Age($form_data['age']);
+        $this->blood_type = new BloodType($form_data['blood_type']);
+        $this->job = new Job($form_data['job']);
+        $this->address = new Address($form_data['zip_code_1'], $form_data['zip_code_2'], $form_data['prefecture'], $form_data['city'], $form_data['address_other']);
+        $this->phone_number = new PhoneNumber($form_data['phone_number_1'], $form_data['phone_number_2'], $form_data['phone_number_3']);
+        $this->mail = new Mail($form_data['mail'], $form_data['mail_confirm']);
+        $this->interest_category = new InterestCategory($form_data['interest_category']);
+        $this->contact_content = new ContactContent($form_data['contact_content']);
     }
 }
